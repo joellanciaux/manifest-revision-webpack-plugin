@@ -65,11 +65,19 @@ ManifestRevisionPlugin.prototype.parsedAssets = function (data) {
             addCurrentItem = true;
         }
 
+        try {
+          var fileType = fs.lstatSync(item.name);
+          if (fs.lstatSync(item.name).isFile()) {
+            addCurrentItem = true;
+          }
+        } catch (err) {
+          // Ignore it since it isn't a file we care about
+        }
+
         // Attempt to ignore chunked assets and other unimportant assets.
         if (item.name.indexOf('multi ') === -1 &&
             item.name.indexOf('~/') === -1 &&
             item.reasons.length === 0 &&
-            fs.lstatSync(item.name).isFile() &&
             item.hasOwnProperty('assets') &&
             item.assets.length === 1) {
 
